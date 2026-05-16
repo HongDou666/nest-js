@@ -23,6 +23,11 @@ export class Student {
    */
   studentNo!: string;
   /**
+   * 关联用户 ID（可选）
+   * @type {number}
+   */
+  userId?: number;
+  /**
    * 创建时间
    * @type {Date}
    */

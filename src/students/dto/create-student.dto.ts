@@ -1,10 +1,12 @@
 import {
   IsEmail,
+  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
   Length,
   Matches,
+  Min,
 } from 'class-validator'; // 类验证器
 
 /**
@@ -43,4 +45,15 @@ export class CreateStudentDto {
     message: '学号仅允许字母、数字、下划线与短横线',
   })
   studentNo?: string;
+
+  /**
+   * 关联用户 ID（可选，传入时会通过 UsersService 校验）
+   * @IsOptional() 可选
+   * @IsInt() 整数
+   * @Min(1) 最小值为1
+   */
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  userId?: number;
 }

@@ -10,13 +10,17 @@ import { PaginatedStudentsDto } from './dto/paginated-students.dto';
 import { QueryStudentDto } from './dto/query-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { Student } from './entities/student.entity';
+import { UsersService } from '../users/users.service';
 
 /**
  * 学生业务逻辑（内存存储，后续可替换为仓储层）
  */
 @Injectable()
 export class StudentsService {
-  constructor(private readonly config: ConfigService) {}
+  constructor(
+    private readonly config: ConfigService,
+    private readonly usersService: UsersService,
+  ) {}
 
   /**
    * 学生列表
@@ -29,6 +33,11 @@ export class StudentsService {
    * @returns 学生
    */
   create(dto: CreateStudentDto): Student {
+    // 如果用户ID不为空，则查询用户
+    if (dto.userId != null) {
+      this.usersService.findOne(dto.userId);
+    }
+
     // 生成学生学号
     const studentNo = dto.studentNo ?? this.generateStudentNo();
 
@@ -55,6 +64,7 @@ export class StudentsService {
       name: dto.name.trim(), // 学生姓名
       email: dto.email.trim().toLowerCase(), // 学生邮箱
       studentNo, // 学生学号
+      userId: dto.userId, // 关联用户
       createdAt: now, // 创建时间
       updatedAt: now, // 更新时间
     };
