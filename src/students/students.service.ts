@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { randomUUID } from 'node:crypto';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { PaginatedStudentsDto } from './dto/paginated-students.dto';
@@ -15,6 +16,8 @@ import { Student } from './entities/student.entity';
  */
 @Injectable()
 export class StudentsService {
+  constructor(private readonly config: ConfigService) {}
+
   /**
    * 学生列表
    */
@@ -181,6 +184,12 @@ export class StudentsService {
    * @returns 学生学号
    */
   private generateStudentNo(): string {
-    return `S${randomUUID().replace(/-/g, '').slice(0, 12).toUpperCase()}`;
+    const secret = this.config.get<string>('secret', 'zqc');
+    const prefix = this.config.get<string>('students.studentNoPrefix', 'S');
+    const randomPart = randomUUID()
+      .replace(/-/g, '')
+      .slice(0, 12)
+      .toUpperCase();
+    return `${secret}-${prefix}${randomPart}`;
   }
 }
