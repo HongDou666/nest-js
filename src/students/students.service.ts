@@ -17,6 +17,10 @@ import { UsersService } from '../users/users.service';
  */
 @Injectable()
 export class StudentsService {
+  /**
+   * @param config 由 AppModule 的 ConfigModule.forRoot({ isGlobal: true }) 全局提供
+   * @param usersService 跨模块注入：StudentsModule imports UsersModule，且 UsersModule exports UsersService
+   */
   constructor(
     private readonly config: ConfigService,
     private readonly usersService: UsersService,
@@ -194,7 +198,15 @@ export class StudentsService {
    * @returns 学生学号
    */
   private generateStudentNo(): string {
-    const secret = this.config.get<string>('secret', 'zqc');
+    /**
+     * 获取配置 secret
+     * @description 之所以这里可以直接获取配置; 是因为 app.module 有配置 isGlobal: true
+     */
+    const secret = this.config.get<string>('secret', 'zhang');
+    /**
+     * 获取配置 students.studentNoPrefix
+     * @description 之所以这里可以直接获取配置; 是因为 students.module 有配置 ConfigModule.forFeature(studentsConfiguration)
+     */
     const prefix = this.config.get<string>('students.studentNoPrefix', 'S');
     const randomPart = randomUUID()
       .replace(/-/g, '')

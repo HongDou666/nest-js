@@ -17,6 +17,7 @@ import { CreateStudentDto } from './dto/create-student.dto';
 import { QueryStudentDto } from './dto/query-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { Student } from './entities/student.entity';
+import { UsersService } from '../users/users.service';
 import { StudentsService } from './students.service';
 
 /**
@@ -31,10 +32,13 @@ import { StudentsService } from './students.service';
 @Controller('students')
 export class StudentsController {
   /**
-   * 构造函数
-   * @param studentsService 学生服务
+   * @param studentsService 本模块 providers 注册，与 Controller 同属 StudentsModule
+   * @param usersService 跨模块注入：StudentsModule imports UsersModule，且 UsersModule exports UsersService
    */
-  constructor(private readonly studentsService: StudentsService) {}
+  constructor(
+    private readonly studentsService: StudentsService,
+    private readonly usersService: UsersService,
+  ) {}
 
   /**
    * 创建学生
