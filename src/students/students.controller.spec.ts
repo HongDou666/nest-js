@@ -1,8 +1,10 @@
 import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import type { Response } from 'express';
+import { StudentGender } from './entities/student.entity';
 import { StudentsController } from './students.controller';
 import { StudentsService } from './students.service';
+import { UsersService } from '../users/users.service';
 
 describe('StudentsController', () => {
   let controller: StudentsController;
@@ -16,11 +18,16 @@ describe('StudentsController', () => {
     remove: jest.fn(),
   };
 
+  const mockUsersService = {};
+
   beforeEach(async () => {
     jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
       controllers: [StudentsController],
-      providers: [{ provide: StudentsService, useValue: mockStudentsService }],
+      providers: [
+        { provide: StudentsService, useValue: mockStudentsService },
+        { provide: UsersService, useValue: mockUsersService },
+      ],
     }).compile();
 
     controller = module.get<StudentsController>(StudentsController);
@@ -35,18 +42,19 @@ describe('StudentsController', () => {
 
     it('学生不存在时应设置 404 并写入定制 JSON', () => {
       mockStudentsService.findById.mockReturnValue(undefined);
-      const response = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn(),
-      } as unknown as Response;
+      const status = jest.fn().mockReturnThis();
+      const json = jest.fn();
+      const response = { status, json } as unknown as Response;
 
       const result = controller.findOne(id, response);
 
       expect(result).toBeUndefined();
-      expect(response.status).toHaveBeenCalledWith(HttpStatus.NOT_FOUND);
-      expect(response.json).toHaveBeenCalledWith({
+      expect(status).toHaveBeenCalledWith(HttpStatus.NOT_FOUND);
+      expect(json).toHaveBeenCalledWith({
         code: 'STUDENT_NOT_FOUND',
-        message: `学生不存在: ${id}`,
+        message: `😯学生不存在: ${id}`,
+        error: 'Not Found',
+        statusCode: HttpStatus.NOT_FOUND,
       });
     });
 
@@ -56,20 +64,20 @@ describe('StudentsController', () => {
         name: '张三',
         email: 'a@b.com',
         studentNo: 'S001',
+        gender: StudentGender.Male,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
       mockStudentsService.findById.mockReturnValue(student);
-      const response = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn(),
-      } as unknown as Response;
+      const status = jest.fn().mockReturnThis();
+      const json = jest.fn();
+      const response = { status, json } as unknown as Response;
 
       const result = controller.findOne(id, response);
 
       expect(result).toEqual(student);
-      expect(response.status).not.toHaveBeenCalled();
-      expect(response.json).not.toHaveBeenCalled();
+      expect(status).not.toHaveBeenCalled();
+      expect(json).not.toHaveBeenCalled();
     });
   });
 });

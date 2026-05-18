@@ -68,6 +68,7 @@ export class StudentsService {
       name: dto.name.trim(), // 学生姓名
       email: dto.email.trim().toLowerCase(), // 学生邮箱
       studentNo, // 学生学号
+      gender: dto.gender, // 学生性别
       userId: dto.userId, // 关联用户
       createdAt: now, // 创建时间
       updatedAt: now, // 更新时间
@@ -173,6 +174,7 @@ export class StudentsService {
           : existing.email,
       studentNo:
         dto.studentNo !== undefined ? dto.studentNo : existing.studentNo,
+      gender: dto.gender !== undefined ? dto.gender : existing.gender,
       updatedAt: new Date(),
     };
 

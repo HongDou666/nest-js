@@ -1,4 +1,12 @@
 /**
+ * 学生性别
+ */
+export enum StudentGender {
+  Male = 'male',
+  Female = 'female',
+}
+
+/**
  * 学生领域模型（后续可替换为 TypeORM / Prisma 等持久化实体）
  */
 export class Student {
@@ -22,6 +30,11 @@ export class Student {
    * @type {string}
    */
   studentNo!: string;
+  /**
+   * 学生性别
+   * @type {StudentGender}
+   */
+  gender!: StudentGender;
   /**
    * 关联用户 ID（可选）
    * @type {number}
