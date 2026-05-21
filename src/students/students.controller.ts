@@ -13,6 +13,7 @@ import {
   Res,
 } from '@nestjs/common';
 import type { Response } from 'express';
+import { Public } from '../auth/public.decorator';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { QueryStudentDto } from './dto/query-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
@@ -52,10 +53,11 @@ export class StudentsController {
   }
 
   /**
-   * 查询学生列表
+   * 查询学生列表（公开，无需认证）
    * @param query 查询学生DTO
    * @returns 学生列表
    */
+  @Public()
   @Get() // Get请求
   @HttpCode(HttpStatus.OK) // 查询成功状态码
   findAll(@Query() query: QueryStudentDto) {
@@ -63,10 +65,11 @@ export class StudentsController {
   }
 
   /**
-   * 查询学生
+   * 获取学生详情（公开，无需认证）
    * @param id 学生ID
    * @returns 学生
    */
+  @Public()
   @Get(':id') // Get请求
   @HttpCode(HttpStatus.OK) // 查询成功状态码
   findOne(

@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthGuard } from './auth/auth.guard';
 import { StudentsModule } from './students/students.module';
 import { UsersModule } from './users/users.module';
 import configuration from './config/configuration';
@@ -21,6 +23,13 @@ import configuration from './config/configuration';
     UsersModule, // 用户模块
   ],
   controllers: [AppController], // 应用程序控制器
-  providers: [AppService], // 应用程序提供者
+  // 应用程序提供者
+  providers: [
+    AppService, // 应用程序服务
+    {
+      provide: APP_GUARD, // 全局守卫
+      useClass: AuthGuard, // 使用AuthGuard守卫
+    },
+  ],
 })
 export class AppModule {}
